@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import io.minoro75.miniweatherapp.remote.ApiService
 import io.minoro75.miniweatherapp.remote.ApiServiceHelper
 import io.minoro75.miniweatherapp.remote.ApiServiceHelperImpl
@@ -18,9 +19,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
-@InstallIn(ActivityComponent::class)
-class AppModule {
+object NetworkModule {
     @Provides
     fun provideBaseUrl() =
         RestConfig.API_SERVER
