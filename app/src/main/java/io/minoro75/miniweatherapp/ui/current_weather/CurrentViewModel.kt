@@ -1,4 +1,4 @@
-package io.minoro75.miniweatherapp.ui.home
+package io.minoro75.miniweatherapp.ui.current_weather
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -13,7 +13,7 @@ import io.minoro75.miniweatherapp.utils.Resource
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class HomeViewModel @ViewModelInject constructor(
+class CurrentViewModel @ViewModelInject constructor(
     private val weatherRepository: WeatherRepository,
     networkUtils: NetworkUtils
 ) : ViewModel() {

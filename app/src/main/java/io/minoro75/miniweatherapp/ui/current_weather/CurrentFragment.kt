@@ -1,41 +1,37 @@
-package io.minoro75.miniweatherapp.ui.home
+package io.minoro75.miniweatherapp.ui.current_weather
 
 import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ExpandableListAdapter
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.minoro75.miniweatherapp.R
 import io.minoro75.miniweatherapp.utils.Status
 import io.minoro75.miniweatherapp.utils.requestPermissionsFragment
 
-import javax.inject.Inject
-
 const val PERMISSION_REQUEST_INTERNET = 1212
-@AndroidEntryPoint
-class HomeFragment : Fragment() {
 
-    private val homeViewModel: HomeViewModel by viewModels<HomeViewModel>()
+@AndroidEntryPoint
+class CurrentFragment : Fragment() {
+
+    private val currentViewModel: CurrentViewModel by viewModels<CurrentViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.tv_home_fragment)
-        val progressBar: ProgressBar = root.findViewById(R.id.pb_home_fragment)
+        val root = inflater.inflate(R.layout.fragment_current, container, false)
+        val textView: TextView = root.findViewById(R.id.tv_current_fragment)
+        val progressBar: ProgressBar = root.findViewById(R.id.pb_current_fragment)
         requestPermissions()
-        homeViewModel.weather.observe(viewLifecycleOwner, Observer {
+        currentViewModel.weather.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     textView.text = it.data!!.main.temp_max.toString()
