@@ -34,7 +34,7 @@ class CurrentFragment : Fragment() {
         currentViewModel.weather.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    textView.text = it.data!!.main.temp_max.toString()
+                    textView.text = it.data!!.current.temp.toString()
                     progressBar.visibility = View.GONE
                 }
                 Status.LOADING -> {

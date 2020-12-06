@@ -8,8 +8,8 @@ class WeatherRepository @Inject constructor(
     private val apiServiceHelper: ApiServiceHelper
 ) {
 
-    suspend fun getWeatherInLondon(): Weather {
-        return apiServiceHelper.getLondonWeather()
+    suspend fun getWeatherInAntalya(): Weather {
+        return apiServiceHelper.getAntalyaWeather()
     }
 
 }

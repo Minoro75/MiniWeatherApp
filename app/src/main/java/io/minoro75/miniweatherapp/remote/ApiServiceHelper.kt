@@ -6,5 +6,5 @@ import io.minoro75.miniweatherapp.data.Weather
 // loading, success and error
 
 interface ApiServiceHelper {
-    suspend fun getLondonWeather(): Weather
+    suspend fun getAntalyaWeather(): Weather
 }

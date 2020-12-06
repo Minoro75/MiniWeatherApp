@@ -1,17 +1,11 @@
 package io.minoro75.miniweatherapp.data
 
 data class Weather(
-    val base: String,
-    val clouds: Clouds,
-    val cod: Int,
-    val coord: Coord,
-    val dt: Int,
-    val id: Int,
-    val main: Main,
-    val name: String,
-    val sys: Sys,
-    val timezone: Int,
-    val visibility: Int,
-    val weather: List<WeatherX>,
-    val wind: Wind
+    val current: Current,
+    val daily: List<Daily>,
+    val hourly: List<Hourly>,
+    val lat: Double,
+    val lon: Double,
+    val timezone: String,
+    val timezone_offset: Int
 )
