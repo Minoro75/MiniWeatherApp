@@ -24,6 +24,8 @@ class HourlyViewModel @ViewModelInject constructor(
     private val _hourly = MutableLiveData<ArrayList<Hourly>>()
     val hourly: LiveData<ArrayList<Hourly>> = _hourly
 
+    private val _hourlyForecast = MutableLiveData<Resource<List<Hourly>>>()
+    val hourlyForecast: LiveData<Resource<List<Hourly>>> = _hourlyForecast
 
     init {
         _weather.postValue(Resource.loading(null))
@@ -40,6 +42,8 @@ class HourlyViewModel @ViewModelInject constructor(
             try {
                 _weather.value = Resource.success(data = weatherRepository.getWeatherInAntalya())
                 _hourly.value = ArrayList(_weather.value!!.data!!.hourly)
+                _hourlyForecast.value =
+                    Resource.success(data = ArrayList(weatherRepository.getWeatherInAntalya().hourly))
 
 
             } catch (ex: java.lang.Exception) {

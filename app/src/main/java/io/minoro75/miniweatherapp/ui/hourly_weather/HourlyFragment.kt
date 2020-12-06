@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import io.minoro75.miniweatherapp.R
+import io.minoro75.miniweatherapp.utils.Status
 
 @AndroidEntryPoint
 class HourlyFragment : Fragment() {
@@ -24,8 +25,22 @@ class HourlyFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_hourly, container, false)
         val textView: TextView = root.findViewById(R.id.tv_hourly_fragment)
 
-        hourlyViewModel.hourly.observe(viewLifecycleOwner, Observer {
+        /*hourlyViewModel.hourly.observe(viewLifecycleOwner, Observer {
             textView.text = it.size.toString()
+        })*/
+
+        hourlyViewModel.hourlyForecast.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    textView.text = it.data!!.size.toString()
+                }
+                Status.LOADING -> {
+
+                }
+                Status.ERROR -> {
+                    textView.text = it.message
+                }
+            }
         })
 
         return root
