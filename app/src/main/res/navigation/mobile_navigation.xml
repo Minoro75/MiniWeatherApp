@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/nav_hourly"
-        android:name="io.minoro75.miniweatherapp.ui.daily_weather.DailyFragment"
+        android:name="io.minoro75.miniweatherapp.ui.hourly_weather.HourlyFragment"
         android:label="@string/menu_hourly"
-        tools:layout="@layout/fragment_daily_forecast" />
+        tools:layout="@layout/fragment_hourly" />
 
     <fragment
         android:id="@+id/nav_daily"
-        android:name="io.minoro75.miniweatherapp.ui.hourly_weather.HourlyFragment"
+        android:name="io.minoro75.miniweatherapp.ui.daily_weather.DailyFragment"
         android:label="@string/menu_daily"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_daily" />
 </navigation>

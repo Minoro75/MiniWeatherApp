@@ -1,13 +1,53 @@
 package io.minoro75.miniweatherapp.ui.hourly_weather
 
+import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import io.minoro75.miniweatherapp.data.Hourly
+import io.minoro75.miniweatherapp.data.Weather
+import io.minoro75.miniweatherapp.repository.WeatherRepository
+import io.minoro75.miniweatherapp.utils.NetworkUtils
+import io.minoro75.miniweatherapp.utils.Resource
+import kotlinx.coroutines.launch
+import kotlin.Exception
 
-class HourlyViewModel : ViewModel() {
+class HourlyViewModel @ViewModelInject constructor(
+    private val weatherRepository: WeatherRepository,
+    networkUtils: NetworkUtils
+) : ViewModel() {
+    private val _weather = MutableLiveData<Resource<Weather>>()
+    val weather: LiveData<Resource<Weather>> = _weather
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is hourly weather Fragment"
+    private val _hourly = MutableLiveData<ArrayList<Hourly>>()
+    val hourly: LiveData<ArrayList<Hourly>> = _hourly
+
+
+    init {
+        _weather.postValue(Resource.loading(null))
+
+        if (networkUtils.isNetworkConnected()) {
+            fetchWeather()
+        } else {
+            _weather.postValue(Resource.error(data = null, message = "Internet Error"))
+        }
     }
-    val text: LiveData<String> = _text
+
+    private fun fetchWeather() {
+        viewModelScope.launch {
+            try {
+                _weather.value = Resource.success(data = weatherRepository.getWeatherInAntalya())
+                _hourly.value = ArrayList(_weather.value!!.data!!.hourly)
+
+
+            } catch (ex: java.lang.Exception) {
+                _weather.value =
+                    Resource.error(data = null, message = ex.localizedMessage ?: "unexpected error")
+            }
+        }
+    }
+
+
 }
