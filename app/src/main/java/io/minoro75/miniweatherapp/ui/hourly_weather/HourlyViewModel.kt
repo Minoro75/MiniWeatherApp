@@ -18,36 +18,29 @@ class HourlyViewModel @ViewModelInject constructor(
     private val weatherRepository: WeatherRepository,
     networkUtils: NetworkUtils
 ) : ViewModel() {
-    private val _weather = MutableLiveData<Resource<Weather>>()
-    val weather: LiveData<Resource<Weather>> = _weather
-
-    private val _hourly = MutableLiveData<ArrayList<Hourly>>()
-    val hourly: LiveData<ArrayList<Hourly>> = _hourly
 
     private val _hourlyForecast = MutableLiveData<Resource<List<Hourly>>>()
     val hourlyForecast: LiveData<Resource<List<Hourly>>> = _hourlyForecast
 
     init {
-        _weather.postValue(Resource.loading(null))
+        _hourlyForecast.postValue(Resource.loading(null))
 
         if (networkUtils.isNetworkConnected()) {
             fetchWeather()
         } else {
-            _weather.postValue(Resource.error(data = null, message = "Internet Error"))
+            _hourlyForecast.postValue(Resource.error(null, "internet error"))
         }
     }
 
     private fun fetchWeather() {
         viewModelScope.launch {
             try {
-                _weather.value = Resource.success(data = weatherRepository.getWeatherInAntalya())
-                _hourly.value = ArrayList(_weather.value!!.data!!.hourly)
                 _hourlyForecast.value =
                     Resource.success(data = ArrayList(weatherRepository.getWeatherInAntalya().hourly))
 
 
             } catch (ex: java.lang.Exception) {
-                _weather.value =
+                _hourlyForecast.value =
                     Resource.error(data = null, message = ex.localizedMessage ?: "unexpected error")
             }
         }

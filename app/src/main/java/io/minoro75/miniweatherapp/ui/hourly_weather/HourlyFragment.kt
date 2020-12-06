@@ -25,10 +25,6 @@ class HourlyFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_hourly, container, false)
         val textView: TextView = root.findViewById(R.id.tv_hourly_fragment)
 
-        /*hourlyViewModel.hourly.observe(viewLifecycleOwner, Observer {
-            textView.text = it.size.toString()
-        })*/
-
         hourlyViewModel.hourlyForecast.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
