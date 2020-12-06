@@ -1,13 +1,11 @@
 package io.minoro75.miniweatherapp.ui.hourly_weather
 
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.minoro75.miniweatherapp.data.Hourly
-import io.minoro75.miniweatherapp.data.Weather
 import io.minoro75.miniweatherapp.repository.WeatherRepository
 import io.minoro75.miniweatherapp.utils.NetworkUtils
 import io.minoro75.miniweatherapp.utils.Resource
@@ -39,7 +37,7 @@ class HourlyViewModel @ViewModelInject constructor(
                     Resource.success(data = ArrayList(weatherRepository.getWeatherInAntalya().hourly))
 
 
-            } catch (ex: java.lang.Exception) {
+            } catch (ex: Exception) {
                 _hourlyForecast.value =
                     Resource.error(data = null, message = ex.localizedMessage ?: "unexpected error")
             }
