@@ -5,8 +5,6 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.components.SingletonComponent
 import io.minoro75.miniweatherapp.remote.ApiService
 import io.minoro75.miniweatherapp.remote.ApiServiceHelper

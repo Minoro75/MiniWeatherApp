@@ -24,6 +24,7 @@ class HourlyViewModel @ViewModelInject constructor(
         _hourlyForecast.postValue(Resource.loading(null))
 
         if (networkUtils.isNetworkConnected()) {
+            //check if we connected to wifi\cellular and then fetch data
             fetchWeather()
         } else {
             _hourlyForecast.postValue(Resource.error(null, "internet error"))

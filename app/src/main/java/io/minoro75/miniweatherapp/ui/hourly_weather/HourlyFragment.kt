@@ -1,5 +1,7 @@
 package io.minoro75.miniweatherapp.ui.hourly_weather
-
+/*
+*Fragment that handles displaying hourly weather changes
+*/
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,12 +33,12 @@ class HourlyFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         adapter = HourlyAdapter(arrayListOf())
         recyclerView.adapter = adapter
-        //val textView: TextView = root.findViewById(R.id.tv_hourly_fragment)
-
+        //observing Resource<> wrapped list of weather
         hourlyViewModel.hourlyForecast.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { list -> renderList(list) }
+                    //if fetched correctly - display
                 }
                 Status.LOADING -> {
 

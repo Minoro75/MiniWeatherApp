@@ -20,7 +20,6 @@ class CurrentViewModel @ViewModelInject constructor(
     val weather: LiveData<Resource<Weather>> = _weather
 
 
-
     init {
         _weather.postValue(Resource.loading(null))
 
