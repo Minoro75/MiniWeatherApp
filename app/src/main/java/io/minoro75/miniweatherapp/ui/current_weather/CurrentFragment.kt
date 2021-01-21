@@ -165,5 +165,8 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
         return view
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
