@@ -75,8 +75,8 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
                 lon = location.longitude
             }
 
-            Snackbar.make(requireView(), "Location lat:${lat} lon:${lon} ", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            /*Snackbar.make(requireView(), "Location lat:${lat} lon:${lon} ", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()*/
             if (lat != 0.0 && lon != 0.0) {
                 currentViewModel.getWeatherInLocation(lat, lon)
             }
@@ -111,6 +111,7 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_current, container, false)
+        //ToDo: Replace with databinding
         val progressIndicator =
             root.findViewById<CircularProgressIndicator>(R.id.pi_current_fragment)
         val temp = root.findViewById<TextView>(R.id.tv_temp)
@@ -132,9 +133,17 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
 
 
         buttonSend.setOnClickListener {
-            lat = editTextLat.text.toString().toDouble()
-            lon = editTextLon.text.toString().toDouble()
-            currentViewModel.getWeatherInLocation(lat, lon)
+            if (editTextLat.text.isNotEmpty() &&
+                editTextLon.text.isNotEmpty()
+            ) {
+
+                lat = editTextLat.text.toString().toDouble()
+                lon = editTextLon.text.toString().toDouble()
+                currentViewModel.getWeatherInLocation(lat, lon)
+            } else {
+                Snackbar.make(requireView(), "Writedown correct dataset", Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show()
+            }
         }
 
         //observing livedata from viewmodel
