@@ -8,18 +8,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import io.minoro75.miniweatherapp.R
+import io.minoro75.miniweatherapp.databinding.FragmentCurrentBinding
 import io.minoro75.miniweatherapp.utils.Status
 import io.minoro75.miniweatherapp.utils.requestPermissionsFragment
 import io.minoro75.miniweatherapp.utils.shouldShowRequestPermissionRationaleFragment
@@ -29,11 +25,16 @@ const val PERMISSION_REQUEST_LOCATION = 1337
 
 @AndroidEntryPoint
 class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
-
     private val currentViewModel: CurrentViewModel by viewModels()
     lateinit var locationManager: LocationManager
     private var lat: Double = 0.0
     private var lon: Double = 0.0
+
+    private var _binding: FragmentCurrentBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onRequestPermissionsResult( //response on request permissions
         requestCode: Int,
@@ -110,35 +111,21 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_current, container, false)
-        //ToDo: Replace with databinding
-        val progressIndicator =
-            root.findViewById<CircularProgressIndicator>(R.id.pi_current_fragment)
-        val temp = root.findViewById<TextView>(R.id.tv_temp)
-        val feelsLike = root.findViewById<TextView>(R.id.tv_feels_like)
-        val humidity = root.findViewById<TextView>(R.id.tv_humidity)
-        val pressure = root.findViewById<TextView>(R.id.tv_pressure)
-        val imageCloudness = root.findViewById<ImageView>(R.id.iv_cloudness)
-        val editTextLat = root.findViewById<EditText>(R.id.et_lat)
-        val editTextLon = root.findViewById<EditText>(R.id.et_lon)
-        val buttonSend = root.findViewById<Button>(R.id.bt_send_data)
+        _binding = FragmentCurrentBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-
-        //hande fab location request
-        val fab: FloatingActionButton = root.findViewById(R.id.fab)
-        fab.setOnClickListener {
+        //get location button
+        binding.fab.setOnClickListener {
             getDeviceLocation()
         }
 
-
-
-        buttonSend.setOnClickListener {
-            if (editTextLat.text.isNotEmpty() &&
-                editTextLon.text.isNotEmpty()
+        binding.btSendData.setOnClickListener {
+            if (binding.etLat.text.isNotEmpty() &&
+                binding.etLon.text.isNotEmpty()
             ) {
 
-                lat = editTextLat.text.toString().toDouble()
-                lon = editTextLon.text.toString().toDouble()
+                lat = binding.etLat.text.toString().toDouble()
+                lon = binding.etLon.text.toString().toDouble()
                 currentViewModel.getWeatherInLocation(lat, lon)
             } else {
                 Snackbar.make(requireView(), "Writedown correct dataset", Snackbar.LENGTH_SHORT)
@@ -150,32 +137,32 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
         currentViewModel.weather.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    progressIndicator.visibility = View.GONE
-                    root.findViewById<CardView>(R.id.cv_current_weather).visibility = View.VISIBLE
+                    binding.piCurrentFragment.visibility = View.GONE
+                    binding.cvCurrentWeather.visibility = View.VISIBLE
                     //ToDo: add databinding for Weather obj
-                    temp.text = it.data!!.current.temp.toString()
-                    feelsLike.text = it.data.current.feels_like.toString()
-                    humidity.text = it.data.current.humidity.toString()
-                    pressure.text = it.data.current.pressure.toString()
+                    binding.tvTemp.text = it.data!!.current.temp.toString()
+                    binding.tvFeelsLike.text = it.data.current.feels_like.toString()
+                    binding.tvHumidity.text = it.data.current.humidity.toString()
+                    binding.tvPressure.text = it.data.current.pressure.toString()
                     Glide.with(this) // loading icon to imageview
                         .load("https://openweathermap.org/img/wn/${it.data.current.weather[0].icon}@2x.png")
                         .centerCrop()
-                        .into(imageCloudness)
+                        .into(binding.ivCloudness)
                 }
                 Status.LOADING -> {
-                    root.findViewById<CardView>(R.id.cv_current_weather).visibility = View.GONE
-                    progressIndicator.visibility = View.VISIBLE
+                    binding.cvCurrentWeather.visibility = View.GONE
+                    binding.piCurrentFragment.visibility = View.VISIBLE
                 }
                 Status.ERROR -> {
-                    progressIndicator.visibility = View.GONE
-                    root.findViewById<CardView>(R.id.cv_current_weather).visibility = View.GONE
+                    binding.piCurrentFragment.visibility = View.GONE
+                    binding.cvCurrentWeather.visibility = View.GONE
                 }
             }
         })
 
 
 
-        return root
+        return view
     }
 
 
