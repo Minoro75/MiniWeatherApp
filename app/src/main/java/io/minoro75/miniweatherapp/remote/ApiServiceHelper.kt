@@ -7,4 +7,5 @@ import io.minoro75.miniweatherapp.data.Weather
 
 interface ApiServiceHelper {
     suspend fun getAntalyaWeather(): Weather
+    suspend fun getWeatherInLocation(lat: Double, lon: Double): Weather
 }

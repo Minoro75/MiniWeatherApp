@@ -12,4 +12,8 @@ class WeatherRepository @Inject constructor(
         return apiServiceHelper.getAntalyaWeather()
     }
 
+    suspend fun getWeatherInLocation(lat: Double, lon: Double): Weather {
+        return apiServiceHelper.getWeatherInLocation(lat, lon)
+    }
+
 }

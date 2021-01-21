@@ -10,6 +10,13 @@
     <string name="menu_current">Current weather</string>
     <string name="menu_hourly">Hourly weather</string>
     <string name="menu_daily">Daily weather</string>
+    <string name="temperature">Temperature</string>
+    <string name="feels_like">Feels like</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Pressure</string>
+    <string name="lat">Lat:</string>
+    <string name="lon">Lon:</string>
+
 
     <string name="permission_required_text">Hi, please allow this one to use our app :)</string>
 </resources>

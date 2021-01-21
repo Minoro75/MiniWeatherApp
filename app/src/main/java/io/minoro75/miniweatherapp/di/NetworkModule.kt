@@ -8,7 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.minoro75.miniweatherapp.remote.ApiService
 import io.minoro75.miniweatherapp.remote.ApiServiceHelper
-import io.minoro75.miniweatherapp.remote.ApiServiceHelperImpl
+import io.minoro75.miniweatherapp.remote.ApiRemoteDataSource
 import io.minoro75.miniweatherapp.remote.RestConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -58,6 +58,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApiServiceHelper(apiServiceHelperImpl: ApiServiceHelperImpl): ApiServiceHelper =
-        apiServiceHelperImpl
+    fun provideApiServiceHelper(apiRemoteDataSource: ApiRemoteDataSource): ApiServiceHelper =
+        apiRemoteDataSource
 }

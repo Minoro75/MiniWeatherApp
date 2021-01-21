@@ -10,7 +10,7 @@ import io.minoro75.miniweatherapp.repository.WeatherRepository
 import io.minoro75.miniweatherapp.utils.NetworkUtils
 import io.minoro75.miniweatherapp.utils.Resource
 import kotlinx.coroutines.launch
-import java.lang.Exception
+import kotlin.Exception
 
 class CurrentViewModel @ViewModelInject constructor(
     private val weatherRepository: WeatherRepository,
@@ -19,12 +19,18 @@ class CurrentViewModel @ViewModelInject constructor(
     private val _weather = MutableLiveData<Resource<Weather>>()
     val weather: LiveData<Resource<Weather>> = _weather
 
+    private val _lat = MutableLiveData<Double>()
+    val lat: LiveData<Double> = _lat
+
+    private val _lon = MutableLiveData<Double>()
+    val lon: LiveData<Double> = _lon
+
 
     init {
         _weather.postValue(Resource.loading(null))
 
         if (networkUtils.isNetworkConnected()) {
-            fetchWeather()
+            getWeatherInLocation(36.8969, 30.7133)
         } else {
             _weather.postValue(Resource.error(data = null, message = "Internet Error"))
         }
@@ -42,5 +48,20 @@ class CurrentViewModel @ViewModelInject constructor(
         }
     }
 
+    fun getWeatherInLocation(lat: Double, lon: Double) {
+        _lat.value = lat
+        _lon.value = lon
+
+        viewModelScope.launch {
+            try {
+                _weather.value =
+                    Resource.success(data = weatherRepository.getWeatherInLocation(lat, lon))
+            } catch (ex: Exception) {
+                _weather.value =
+                    Resource.error(data = null, message = ex.localizedMessage ?: "unexpected error")
+            }
+        }
+
+    }
 
 }

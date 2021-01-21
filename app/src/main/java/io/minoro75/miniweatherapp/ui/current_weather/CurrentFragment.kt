@@ -3,25 +3,26 @@ package io.minoro75.miniweatherapp.ui.current_weather
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.minoro75.miniweatherapp.R
-import io.minoro75.miniweatherapp.data.Hourly
 import io.minoro75.miniweatherapp.utils.Status
-import io.minoro75.miniweatherapp.utils.checkSelfPermissionFragment
 import io.minoro75.miniweatherapp.utils.requestPermissionsFragment
 import io.minoro75.miniweatherapp.utils.shouldShowRequestPermissionRationaleFragment
 
@@ -32,6 +33,9 @@ const val PERMISSION_REQUEST_LOCATION = 1337
 class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val currentViewModel: CurrentViewModel by viewModels()
+    lateinit var locationManager: LocationManager
+    private var lat: Double = 0.0
+    private var lon: Double = 0.0
 
     override fun onRequestPermissionsResult( //response on request permissions
         requestCode: Int,
@@ -39,7 +43,7 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
         grantResults: IntArray
     ) {
         if (requestCode == PERMISSION_REQUEST_LOCATION) {
-            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.size == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 getDeviceLocation()
                 Snackbar.make(requireView(), "Permission granted", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
@@ -52,12 +56,30 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
     }
 
     private fun getDeviceLocation() { //check if permission granted already
-        if (checkSelfPermissionFragment(Manifest.permission.ACCESS_FINE_LOCATION) ==
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) ==
+            PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) ==
             PackageManager.PERMISSION_GRANTED
         ) {
-            //ToDo: IMPLEMENT LOCATION
-            Snackbar.make(requireView(), "Location 00/00", Snackbar.LENGTH_LONG)
+            //get location
+            locationManager = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 5000, 0F
+            ) { location ->
+                lat = location.latitude
+                lon = location.longitude
+            }
+
+            Snackbar.make(requireView(), "Location lat:${lat} lon:${lon} ", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
+            currentViewModel.getWeatherInLocation(lat, lon)
         } else {
             requestLocationPermission()
         }
@@ -66,12 +88,18 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
     private fun requestLocationPermission() {
         if (shouldShowRequestPermissionRationaleFragment(Manifest.permission.ACCESS_FINE_LOCATION) == true) {
             requestPermissionsFragment(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 PERMISSION_REQUEST_LOCATION
             )
         } else {
             requestPermissionsFragment(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 PERMISSION_REQUEST_LOCATION
             )
         }
@@ -83,30 +111,42 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_current, container, false)
-        val textView: TextView = root.findViewById(R.id.tv_current_fragment)
-        val progressBar: ProgressBar = root.findViewById(R.id.pb_current_fragment)
+        val progressIndicator =
+            root.findViewById<CircularProgressIndicator>(R.id.pi_current_fragment)
+
+        val temp = root.findViewById<TextView>(R.id.tv_temp)
+        val feelsLike = root.findViewById<TextView>(R.id.tv_feels_like)
+        val humidity = root.findViewById<TextView>(R.id.tv_humidity)
+        val pressure = root.findViewById<TextView>(R.id.tv_pressure)
+        val imageCloudness = root.findViewById<ImageView>(R.id.iv_cloudness)
 
         val fab: FloatingActionButton = root.findViewById(R.id.fab)
         fab.setOnClickListener { view ->
             getDeviceLocation()
         }
-
-
-
-
-
+        //observing livedata from viewmodel
         currentViewModel.weather.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    textView.text = it.data!!.current.temp.toString()
-                    progressBar.visibility = View.GONE
+                    progressIndicator.visibility = View.GONE
+                    root.findViewById<CardView>(R.id.cv_current_weather).visibility = View.VISIBLE
+                    //ToDo: add databinding for Weather obj
+                    temp.text = it.data!!.current.temp.toString()
+                    feelsLike.text = it.data.current.feels_like.toString()
+                    humidity.text = it.data.current.humidity.toString()
+                    pressure.text = it.data.current.pressure.toString()
+                    Glide.with(this) // loading icon to imageview
+                        .load("https://openweathermap.org/img/wn/${it.data.current.weather[0].icon}@2x.png")
+                        .centerCrop()
+                        .into(imageCloudness)
                 }
                 Status.LOADING -> {
-                    progressBar.visibility = View.VISIBLE
+                    root.findViewById<CardView>(R.id.cv_current_weather).visibility = View.GONE
+                    progressIndicator.visibility = View.VISIBLE
                 }
                 Status.ERROR -> {
-                    progressBar.visibility = View.GONE
-                    textView.text = it.message
+                    progressIndicator.visibility = View.GONE
+                    root.findViewById<CardView>(R.id.cv_current_weather).visibility = View.GONE
                 }
             }
         })
