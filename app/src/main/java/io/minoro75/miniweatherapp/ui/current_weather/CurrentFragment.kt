@@ -8,9 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -79,7 +77,9 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
 
             Snackbar.make(requireView(), "Location lat:${lat} lon:${lon} ", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
-            currentViewModel.getWeatherInLocation(lat, lon)
+            if (lat != 0.0 && lon != 0.0) {
+                currentViewModel.getWeatherInLocation(lat, lon)
+            }
         } else {
             requestLocationPermission()
         }
@@ -113,17 +113,30 @@ class CurrentFragment : Fragment(), ActivityCompat.OnRequestPermissionsResultCal
         val root = inflater.inflate(R.layout.fragment_current, container, false)
         val progressIndicator =
             root.findViewById<CircularProgressIndicator>(R.id.pi_current_fragment)
-
         val temp = root.findViewById<TextView>(R.id.tv_temp)
         val feelsLike = root.findViewById<TextView>(R.id.tv_feels_like)
         val humidity = root.findViewById<TextView>(R.id.tv_humidity)
         val pressure = root.findViewById<TextView>(R.id.tv_pressure)
         val imageCloudness = root.findViewById<ImageView>(R.id.iv_cloudness)
+        val editTextLat = root.findViewById<EditText>(R.id.et_lat)
+        val editTextLon = root.findViewById<EditText>(R.id.et_lon)
+        val buttonSend = root.findViewById<Button>(R.id.bt_send_data)
 
+
+        //hande fab location request
         val fab: FloatingActionButton = root.findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener {
             getDeviceLocation()
         }
+
+
+
+        buttonSend.setOnClickListener {
+            lat = editTextLat.text.toString().toDouble()
+            lon = editTextLon.text.toString().toDouble()
+            currentViewModel.getWeatherInLocation(lat, lon)
+        }
+
         //observing livedata from viewmodel
         currentViewModel.weather.observe(viewLifecycleOwner, Observer {
             when (it.status) {

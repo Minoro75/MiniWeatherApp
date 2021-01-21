@@ -82,12 +82,12 @@
                 android:fontFamily="@font/bitter"
                 android:text="@string/lon"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintBottom_toTopOf="@+id/button"
+                app:layout_constraintBottom_toTopOf="@+id/bt_send_data"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/bt_send_data"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -103,7 +103,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
-                android:id="@+id/editTextNumberSigned"
+                android:id="@+id/et_lat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -115,14 +115,14 @@
                 android:hint="32.414145"
                 android:inputType="numberDecimal"
                 android:singleLine="true"
-                app:layout_constraintBottom_toTopOf="@+id/editTextNumberSigned2"
+                app:layout_constraintBottom_toTopOf="@+id/et_lon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/textView10"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/editTextNumberSigned2"
+                android:id="@+id/et_lon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -134,10 +134,10 @@
                 android:hint="15.7775"
                 android:inputType="numberDecimal"
                 android:singleLine="true"
-                app:layout_constraintBottom_toTopOf="@+id/button"
+                app:layout_constraintBottom_toTopOf="@+id/bt_send_data"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView11"
-                app:layout_constraintTop_toBottomOf="@+id/editTextNumberSigned" />
+                app:layout_constraintTop_toBottomOf="@+id/et_lat" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
